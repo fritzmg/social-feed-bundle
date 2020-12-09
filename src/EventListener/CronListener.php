@@ -5,6 +5,9 @@ namespace Pdir\SocialFeedBundle\EventListener;
 use Pdir\SocialFeedBundle\Importer\Importer;
 use Pdir\SocialFeedBundle\Model\SocialFeedModel as SocialFeedModel;
 use Abraham\TwitterOAuth\TwitterOAuth;
+use LinkedIn\Client;
+use LinkedIn\AccessToken;
+use LinkedIn\Scope;
 
 class CronListener extends \System
 {
@@ -277,6 +280,40 @@ class CronListener extends \System
         } catch(Facebook\Exceptions\FacebookSDKException $e) {
             echo 'Facebook SDK returned an error: ' . $e->getMessage();
             exit;
+        }
+    }
+
+    public function getLinkedinPosts() {
+        $objSocialFeed = SocialFeedModel::findAll();
+
+        \System::log('getLinkedinPosts', __METHOD__, TL_GENERAL);
+        echo "TEST<br>";
+
+        if(NULL === $objSocialFeed)
+        {
+            return;
+        }
+
+        foreach($objSocialFeed as $obj) {
+            if($obj->socialFeedType == "LinkedIn") {
+                echo "test linkedin import" . date('d.m.Y H:i:s').'<br>';
+
+                $client = new Client(
+                    'xxx',
+                    'xxx'
+                );
+
+                $accessToken = $client->getAccessToken($_GET['code']);
+                print_r($accessToken);
+
+                $tokenData = $accessToken;
+                $accessToken = new AccessToken($tokenData['token'], $tokenData['expiresAt']);
+                $client->setAccessToken($accessToken);
+
+                $companyId = 'xxx';
+                $companyInfo = $client->get('organizations/' . $companyId);
+                print_r($companyInfo);
+            }
         }
     }
 
