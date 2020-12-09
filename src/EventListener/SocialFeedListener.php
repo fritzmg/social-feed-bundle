@@ -41,6 +41,10 @@ class SocialFeedListener
         if ('Instagram' === $dc->activeRecord->socialFeedType && $dc->activeRecord->psf_instagramAppId && Input::post('psf_instagramRequestToken')) {
             $this->requestAccessToken($dc->activeRecord->psf_instagramAppId);
         }
+
+        if ('LinkedIn' === $dc->activeRecord->socialFeedType && $dc->activeRecord->psf_linkedinClientId && $dc->activeRecord->psf_linkedinClientSecret && Input::post('psf_linkedInRequestToken')) {
+            $this->requestLinkedinAccessToken($dc->activeRecord->psf_linkedinClientId, $dc->activeRecord->psf_linkedinClientSecret);
+        }
     }
 
     /**
@@ -75,5 +79,30 @@ class SocialFeedListener
         ];
 
         throw new RedirectResponseException('https://api.instagram.com/oauth/authorize/?'.http_build_query($data));
+    }
+
+    /**
+     * Request the LinkedIn access token.
+     *
+     * @param string $clientId
+     * @param string $clientSecret
+     */
+    private function requestLinkedinAccessToken($clientId, $clientSecret)
+    {
+        $this->session->set(self::SESSION_KEY, [
+            'socialFeedId' => Input::get('id'),
+            'backUrl' => Environment::get('uri'),
+        ]);
+
+        $this->session->save();
+
+        $data = [
+            'response_type' => 'code',
+            'client_id' => $clientId,
+            'redirect_uri' => $this->router->generate('linkedin_auth', [], RouterInterface::ABSOLUTE_URL),
+            'scope' => 'r_liteprofile%20r_emailaddress%20w_member_social'
+        ];
+
+        throw new RedirectResponseException('https://www.linkedin.com/oauth/v2/authorization?'.http_build_query($data));
     }
 }
