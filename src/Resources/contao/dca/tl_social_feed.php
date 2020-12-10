@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_social_feed'] = [
         'socialFeedType_Facebook' => 'pdir_sf_fb_account,pdir_sf_fb_app_id,pdir_sf_fb_app_secret,pdir_sf_fb_access_token,pdir_sf_fb_news_archive,pdir_sf_fb_news_cronjob,pdir_sf_fb_posts,pdir_sf_fb_news_last_import_date,pdir_sf_fb_news_last_import_time',
         'socialFeedType_Instagram' => 'psf_instagramAppId,psf_instagramAppSecret,psf_instagramRequestToken,instagram_account,number_posts,pdir_sf_fb_news_archive,pdir_sf_fb_news_cronjob,pdir_sf_fb_news_last_import_date,pdir_sf_fb_news_last_import_time;{pdir_sf_account_image_legend},instagram_account_picture,instagram_account_picture_size',
         'socialFeedType_Twitter' => 'twitter_api_key,twitter_api_secret_key,twitter_access_token,twitter_access_token_secret,twitter_account,search,number_posts,pdir_sf_fb_news_archive,pdir_sf_fb_news_cronjob,show_retweets,hashtags_link,show_reply,pdir_sf_fb_news_last_import_date,pdir_sf_fb_news_last_import_time',
-        'socialFeedType_LinkedIn' => 'psf_linkedinClientId,psf_linkedinClientSecret,psf_linkedinCompanyId,psf_linkedinAccessToken,psf_linkedInRequestToken,number_posts,pdir_sf_fb_news_archive,pdir_sf_fb_news_cronjob,pdir_sf_fb_news_last_import_date,pdir_sf_fb_news_last_import_time'
+        'socialFeedType_LinkedIn' => 'psf_linkedinClientId,psf_linkedinClientSecret,psf_linkedinCompanyId,psf_linkedInRequestToken,psf_linkedinAccessToken,psf_accessTokenDate,number_posts,pdir_sf_fb_news_archive,pdir_sf_fb_news_cronjob,pdir_sf_fb_news_last_import_date,pdir_sf_fb_news_last_import_time'
     ),
 
     'fields' => [
@@ -438,9 +438,22 @@ $GLOBALS['TL_DCA']['tl_social_feed'] = [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => [
-                'tl_class' => 'w50'
+                'tl_class' => 'w50 clr',
+                'readonly' => 'readonly'
             ],
             'sql' => "text NULL",
+        ],
+
+        'psf_accessTokenDate' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_social_feed']['psf_accessTokenDate'],
+            'exclude' => true,
+            'inputType' => 'text',
+            'sql' => "varchar(255) NOT NULL default ''",
+            'eval' => [
+                'rgxp' => 'date',
+                'tl_class' => 'w50',
+                'readonly' => 'readonly'
+            ]
         ],
 
         'psf_linkedInRequestToken' => [
@@ -449,7 +462,7 @@ $GLOBALS['TL_DCA']['tl_social_feed'] = [
             'inputType' => 'checkbox',
             'eval' => [
                 'doNotSaveEmpty' => true,
-                'tl_class' => 'w50 m12'
+                'tl_class' => 'w50 clr'
             ],
             'save_callback' => [
                 [\Pdir\SocialFeedBundle\EventListener\SocialFeedListener::class, 'onRequestTokenSave'],

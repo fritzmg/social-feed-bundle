@@ -102,7 +102,7 @@ class SocialFeedListener
             'response_type' => 'code',
             'client_id' => $clientId,
             'redirect_uri' => $this->router->generate('auth_linkedin', [], RouterInterface::ABSOLUTE_URL),
-            'scope' => 'r_liteprofile'
+            'scope' => 'r_liteprofile,r_emailaddress,w_member_social'
         ];
 
         throw new RedirectResponseException('https://www.linkedin.com/oauth/v2/authorization?'.http_build_query($data));

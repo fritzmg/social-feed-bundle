@@ -303,16 +303,12 @@ class CronListener extends \System
                     $obj->psf_linkedinClientSecret
                 );
 
-                $accessToken = $client->getAccessToken($_GET['code']);
-                print_r($accessToken);
+                $client->setAccessToken( $obj->psf_linkedinAccessToken);
 
-                $tokenData = $accessToken;
-                $accessToken = new AccessToken($tokenData['token'], $tokenData['expiresAt']);
-                $client->setAccessToken($accessToken);
-
-                $companyId = $obj->psf_linkedinCompanyId;
-                $companyInfo = $client->get('organizations/' . $companyId);
-                print_r($companyInfo);
+                $posts = $client->get(
+                    'organizations/'.$obj->psf_linkedinCompanyId
+                );
+                print_r($posts);
             }
         }
     }

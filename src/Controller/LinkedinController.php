@@ -19,6 +19,11 @@ use LinkedIn\Client;
 class LinkedinController
 {
     /**
+     * @var Connection
+     */
+    private $db;
+
+    /**
      * @var RouterInterface
      */
     private $router;
@@ -58,7 +63,7 @@ class LinkedinController
             $accessToken = $client->getAccessToken($request->query->get('code'));
 
             // Store the access token and remove temporary session key
-            $this->db->update('tl_social_feed', ['psf_linkedinAccessToken' => $accessToken], ['id' => $sessionData['socialFeedId']]);
+            $this->db->update('tl_social_feed', ['psf_linkedinAccessToken' => $accessToken, 'psf_accessTokenDate' => time()], ['id' => $sessionData['socialFeedId']]);
             $this->session->remove(SocialFeedListener::SESSION_KEY);
         }
 
