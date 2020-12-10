@@ -92,6 +92,8 @@ class SocialFeedListener
         $this->session->set(self::SESSION_KEY, [
             'socialFeedId' => Input::get('id'),
             'backUrl' => Environment::get('uri'),
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret
         ]);
 
         $this->session->save();
@@ -99,8 +101,8 @@ class SocialFeedListener
         $data = [
             'response_type' => 'code',
             'client_id' => $clientId,
-            'redirect_uri' => $this->router->generate('linkedin_auth', [], RouterInterface::ABSOLUTE_URL),
-            'scope' => 'r_liteprofile%20r_emailaddress%20w_member_social'
+            'redirect_uri' => $this->router->generate('auth_linkedin', [], RouterInterface::ABSOLUTE_URL),
+            'scope' => 'r_liteprofile'
         ];
 
         throw new RedirectResponseException('https://www.linkedin.com/oauth/v2/authorization?'.http_build_query($data));

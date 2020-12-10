@@ -299,8 +299,8 @@ class CronListener extends \System
                 echo "test linkedin import" . date('d.m.Y H:i:s').'<br>';
 
                 $client = new Client(
-                    'xxx',
-                    'xxx'
+                    $obj->psf_linkedinClientId,
+                    $obj->psf_linkedinClientSecret
                 );
 
                 $accessToken = $client->getAccessToken($_GET['code']);
@@ -310,7 +310,7 @@ class CronListener extends \System
                 $accessToken = new AccessToken($tokenData['token'], $tokenData['expiresAt']);
                 $client->setAccessToken($accessToken);
 
-                $companyId = 'xxx';
+                $companyId = $obj->psf_linkedinCompanyId;
                 $companyInfo = $client->get('organizations/' . $companyId);
                 print_r($companyInfo);
             }

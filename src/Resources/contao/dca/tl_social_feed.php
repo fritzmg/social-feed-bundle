@@ -438,7 +438,6 @@ $GLOBALS['TL_DCA']['tl_social_feed'] = [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => [
-                'maxlength' => 255,
                 'tl_class' => 'w50'
             ],
             'sql' => "text NULL",
