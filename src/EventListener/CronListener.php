@@ -296,19 +296,33 @@ class CronListener extends \System
 
         foreach($objSocialFeed as $obj) {
             if($obj->socialFeedType == "LinkedIn") {
-                echo "test linkedin import" . date('d.m.Y H:i:s').'<br>';
+                $cron = $obj->pdir_sf_fb_news_cronjob;
+                $lastImport = $obj->pdir_sf_fb_news_last_import_date;
+                $tstamp = time();
+                if($lastImport == "") $lastImport = 0;
+                $interval = $tstamp - $lastImport;
 
-                $client = new Client(
-                    $obj->psf_linkedinClientId,
-                    $obj->psf_linkedinClientSecret
-                );
+                if( ($interval >= $cron && $cron != "no_cronjob") || ($lastImport == 0 && $cron != "no_cronjob") ) {
+                    $this->setLastImportDate($id = $obj->id);
 
-                $client->setAccessToken( $obj->psf_linkedinAccessToken);
+                    echo "test linkedin import" . date('d.m.Y H:i:s').'<br>';
 
-                $posts = $client->get(
-                    'organizations/'.$obj->psf_linkedinCompanyId
-                );
-                print_r($posts);
+                    $client = new Client(
+                        $obj->psf_linkedinClientId,
+                        $obj->psf_linkedinClientSecret
+                    );
+
+                    $client->setAccessToken( $obj->psf_linkedinAccessToken);
+
+                    $posts = $client->get(
+                        'organizations/'.$obj->psf_linkedinCompanyId
+                    );
+                    print_r($posts);
+                }
+
+                \System::log('Social Feed: LinkedIn Import ', __METHOD__, TL_GENERAL);
+                $this->import('Automator');
+                $this->Automator->generateSymlinks();
             }
         }
     }
@@ -366,7 +380,6 @@ class CronListener extends \System
                             continue;
                         }
 
-                        echo $post->in_reply_to_status_id."<br>";
                         if($post->in_reply_to_status_id != "" && $obj->show_reply != 1) {
                             continue;
                         }
